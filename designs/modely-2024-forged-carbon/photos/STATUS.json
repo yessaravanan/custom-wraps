@@ -1,0 +1,88 @@
+{
+  "photo_incorporation": "blocked",
+  "wrap_contains_photos": false,
+  "reason": "Photo incorporation is blocked. The original photograph bytes were not available: the supplied attachment paths were missing, and this repository does not contain matching files. No face, child, or scene was synthesized or substituted.",
+  "missing": [
+    "child_giant_tire",
+    "child_halloween_truck",
+    "child_monster_truck"
+  ],
+  "invalid": [],
+  "present": [
+    {
+      "id": "child_giant_tire",
+      "description": "Original photo of the child in a giant tire",
+      "panel": "front_door_left",
+      "expected_stem": "child_giant_tire",
+      "path": null,
+      "sha256": null
+    },
+    {
+      "id": "child_halloween_truck",
+      "description": "Original photo of the child beside the purple Halloween inflatable truck",
+      "panel": "front_door_right",
+      "expected_stem": "child_halloween_truck",
+      "path": null,
+      "sha256": null
+    },
+    {
+      "id": "child_monster_truck",
+      "description": "Original photo of the child beside the real monster truck",
+      "panel": "trunk",
+      "expected_stem": "child_monster_truck",
+      "path": null,
+      "sha256": null
+    }
+  ],
+  "repository_exact_matches": [],
+  "repository_loose_name_matches": [],
+  "slots": [
+    {
+      "id": "child_giant_tire",
+      "description": "Original photo of the child in a giant tire",
+      "panel": "front_door_left",
+      "aspect_h_over_w": 1.28,
+      "rect": [
+        42,
+        312,
+        191,
+        507
+      ]
+    },
+    {
+      "id": "child_halloween_truck",
+      "description": "Original photo of the child beside the purple Halloween inflatable truck",
+      "panel": "front_door_right",
+      "aspect_h_over_w": 1.28,
+      "rect": [
+        834,
+        311,
+        984,
+        507
+      ]
+    },
+    {
+      "id": "child_monster_truck",
+      "description": "Original photo of the child beside the real monster truck",
+      "panel": "trunk",
+      "aspect_h_over_w": 0.68,
+      "rect": [
+        437,
+        804,
+        588,
+        902
+      ]
+    }
+  ],
+  "originals_directory": "designs/modely-2024-forged-carbon/photos/originals",
+  "accepted_extensions": [
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp"
+  ],
+  "minimum_size": {
+    "short_side": 480,
+    "long_side": 640
+  }
+}

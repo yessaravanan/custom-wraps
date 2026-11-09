@@ -1,0 +1,157 @@
+{
+  "template": "modely/template.png",
+  "vehicle": "2024 Model Y (pre-2025 Paint Shop template in modely/)",
+  "size": [
+    1024,
+    1024
+  ],
+  "paintable_pixels": 484603,
+  "unfilled_white_pixels": 0,
+  "transparent_pixels_cleared": 563973,
+  "max_channel": 140,
+  "mean_paintable_rgb": [
+    43.1,
+    46.55,
+    50.33
+  ],
+  "panels": {
+    "front_fender_left": {
+      "pixels": 23416,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        46.08,
+        49.77,
+        53.78
+      ]
+    },
+    "hood": {
+      "pixels": 56455,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        46.36,
+        50.07,
+        54.12
+      ]
+    },
+    "front_fender_right": {
+      "pixels": 23569,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        41.44,
+        44.75,
+        48.42
+      ]
+    },
+    "lower_body": {
+      "pixels": 113347,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        44.52,
+        48.08,
+        51.96
+      ]
+    },
+    "roof": {
+      "pixels": 56492,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        41.5,
+        44.81,
+        48.47
+      ]
+    },
+    "front_door_right": {
+      "pixels": 43944,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        42.17,
+        45.56,
+        49.27
+      ]
+    },
+    "front_door_left": {
+      "pixels": 43913,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        43.97,
+        47.49,
+        51.37
+      ]
+    },
+    "mirror_right": {
+      "pixels": 3032,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        47.13,
+        50.96,
+        55.08
+      ]
+    },
+    "mirror_left": {
+      "pixels": 2983,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        33.5,
+        36.24,
+        39.25
+      ]
+    },
+    "rear_door_left": {
+      "pixels": 36819,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        42.06,
+        45.42,
+        49.1
+      ]
+    },
+    "rear_door_right": {
+      "pixels": 36788,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        43.8,
+        47.3,
+        51.13
+      ]
+    },
+    "rear_quarter_left": {
+      "pixels": 21900,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        29.89,
+        32.29,
+        34.99
+      ]
+    },
+    "rear_quarter_right": {
+      "pixels": 21945,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        44.79,
+        48.37,
+        52.29
+      ]
+    },
+    "trunk": {
+      "pixels": 48892,
+      "unfilled_white": 0,
+      "mean_rgb": [
+        44.3,
+        47.83,
+        51.69
+      ]
+    }
+  },
+  "required_panels_fully_filled": true,
+  "print_ready_manufacturer_template": false,
+  "notes": [
+    "Paint Shop visualization UV at the template resolution (1024x1024), not a measured vinyl cut file.",
+    "The repository does not publish verified body-panel dimensions in millimeters.",
+    "Hood, roof, trunk, doors, and the other islands sample one periodic carbon field."
+  ],
+  "output": "modely/example/Forged_Carbon.png",
+  "file_bytes": 859884,
+  "within_1mb": true,
+  "photo_incorporation": "blocked",
+  "wrap_contains_photos": false
+}
