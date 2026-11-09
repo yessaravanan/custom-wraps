@@ -1,12 +1,8 @@
 {
-  "photo_incorporation": "blocked",
-  "wrap_contains_photos": false,
-  "reason": "Photo incorporation is blocked. The original photograph bytes were not available: the supplied attachment paths were missing, and this repository does not contain matching files. No face, child, or scene was synthesized or substituted.",
-  "missing": [
-    "child_giant_tire",
-    "child_halloween_truck",
-    "child_monster_truck"
-  ],
+  "photo_incorporation": "incorporated",
+  "wrap_contains_photos": true,
+  "reason": "The three files in photos/originals/ were composited into the decal slots.",
+  "missing": [],
   "invalid": [],
   "present": [
     {
@@ -14,63 +10,79 @@
       "description": "Original photo of the child in a giant tire",
       "panel": "front_door_left",
       "expected_stem": "child_giant_tire",
-      "path": null,
-      "sha256": null
+      "path": "designs/modely-2024-forged-carbon/photos/originals/child_giant_tire.jpg",
+      "sha256": "c52b76404abd5363f8a6c9a2ec19cd621d4220342149c7333be2220d852c9f5a"
     },
     {
       "id": "child_halloween_truck",
       "description": "Original photo of the child beside the purple Halloween inflatable truck",
-      "panel": "front_door_right",
+      "panel": "roof",
       "expected_stem": "child_halloween_truck",
-      "path": null,
-      "sha256": null
+      "path": "designs/modely-2024-forged-carbon/photos/originals/child_halloween_truck.jpg",
+      "sha256": "76f74a00341704f1cd02e1c8d2d1788a92d147074458d66b5b9b2a92764d17b4"
     },
     {
       "id": "child_monster_truck",
       "description": "Original photo of the child beside the real monster truck",
       "panel": "trunk",
       "expected_stem": "child_monster_truck",
-      "path": null,
-      "sha256": null
+      "path": "designs/modely-2024-forged-carbon/photos/originals/child_monster_truck.jpg",
+      "sha256": "5cd5d948aa4bd869d65fe168edc44d1441a038d571fc903b44f49403c0fc2743"
     }
   ],
-  "repository_exact_matches": [],
+  "repository_exact_matches": [
+    "designs/modely-2024-forged-carbon/photos/originals/child_halloween_truck.jpg",
+    "designs/modely-2024-forged-carbon/photos/originals/child_giant_tire.jpg",
+    "designs/modely-2024-forged-carbon/photos/originals/child_monster_truck.jpg"
+  ],
   "repository_loose_name_matches": [],
   "slots": [
     {
       "id": "child_giant_tire",
       "description": "Original photo of the child in a giant tire",
       "panel": "front_door_left",
-      "aspect_h_over_w": 1.28,
+      "aspect_h_over_w": 1.33,
       "rect": [
         42,
-        312,
+        308,
         191,
-        507
+        511
+      ],
+      "focal": [
+        0.5,
+        0.47
       ]
     },
     {
       "id": "child_halloween_truck",
       "description": "Original photo of the child beside the purple Halloween inflatable truck",
-      "panel": "front_door_right",
-      "aspect_h_over_w": 1.28,
+      "panel": "roof",
+      "aspect_h_over_w": 0.75,
       "rect": [
-        834,
-        311,
-        984,
-        507
+        418,
+        207,
+        606,
+        344
+      ],
+      "focal": [
+        0.46,
+        0.58
       ]
     },
     {
       "id": "child_monster_truck",
       "description": "Original photo of the child beside the real monster truck",
       "panel": "trunk",
-      "aspect_h_over_w": 0.68,
+      "aspect_h_over_w": 0.75,
       "rect": [
         437,
-        804,
+        799,
         588,
-        902
+        908
+      ],
+      "focal": [
+        0.58,
+        0.66
       ]
     }
   ],

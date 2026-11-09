@@ -7,12 +7,13 @@
   ],
   "paintable_pixels": 484603,
   "unfilled_white_pixels": 0,
+  "bright_pixels_inside_photo_slots": 28,
   "transparent_pixels_cleared": 563973,
-  "max_channel": 140,
+  "max_channel": 255,
   "mean_paintable_rgb": [
-    43.1,
-    46.55,
-    50.33
+    53.03,
+    55.17,
+    57.2
   ],
   "panels": {
     "front_fender_left": {
@@ -46,18 +47,18 @@
       "pixels": 113347,
       "unfilled_white": 0,
       "mean_rgb": [
-        44.52,
-        48.08,
-        51.96
+        54.07,
+        56.74,
+        59.13
       ]
     },
     "roof": {
       "pixels": 56492,
       "unfilled_white": 0,
       "mean_rgb": [
-        41.5,
-        44.81,
-        48.47
+        67.86,
+        65.83,
+        69.21
       ]
     },
     "front_door_right": {
@@ -73,9 +74,9 @@
       "pixels": 43913,
       "unfilled_white": 0,
       "mean_rgb": [
-        43.97,
-        47.49,
-        51.37
+        94.94,
+        93.2,
+        81.99
       ]
     },
     "mirror_right": {
@@ -136,9 +137,9 @@
       "pixels": 48892,
       "unfilled_white": 0,
       "mean_rgb": [
-        44.3,
-        47.83,
-        51.69
+        66.43,
+        67.92,
+        68.31
       ]
     }
   },
@@ -150,8 +151,8 @@
     "Hood, roof, trunk, doors, and the other islands sample one periodic carbon field."
   ],
   "output": "modely/example/Forged_Carbon.png",
-  "file_bytes": 859884,
+  "file_bytes": 948680,
   "within_1mb": true,
-  "photo_incorporation": "blocked",
-  "wrap_contains_photos": false
+  "photo_incorporation": "incorporated",
+  "wrap_contains_photos": true
 }

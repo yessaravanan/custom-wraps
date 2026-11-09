@@ -18,25 +18,19 @@ The field repeats across the texture edges. Hood, roof, trunk, and doors therefo
 
 Paint Shop limits followed here: PNG, 1024×1024, at most 1 MB, filename `Forged_Carbon.png`.
 
-## Photos are not in the wrap
+## Photographs in the wrap
 
-Three personal photographs were requested as decals:
+`modely/example/Forged_Carbon.png` composites the three supplied original files. Nothing is synthesized.
 
-1. Child in a giant tire — front door, image left
-2. Child beside the purple Halloween inflatable truck — front door, image right
-3. Child beside the real monster truck — trunk
+| Original | Placement | Why this island |
+| --- | --- | --- |
+| `photos/originals/child_giant_tire.jpg` | Front door, image left | Portrait photo, child centered in the tire |
+| `photos/originals/child_halloween_truck.jpg` | Roof | Landscape photo; this island keeps the child and the purple inflatable together |
+| `photos/originals/child_monster_truck.jpg` | Trunk | Landscape photo; the child stays in the lower part of the frame |
 
-Those files were not on disk. The attachment paths supplied with the request were missing, and no image in this repository matches those filenames or subjects. The generator does not draw a face, a child, a tire scene, or a truck scene. `modely/example/Forged_Carbon.png` is carbon only.
+Each decal is inset inside its panel, cover-cropped around that subject, and edged with a dark gunmetal frame so the carbon remains the ground. The Paint Shop UV is 1024×1024, so the decals are small on the template. `previews/photo_details.png` shows those slots enlarged. `photos/STATUS.json` records each file's sha256.
 
-`photos/STATUS.json` records the blocker. `previews/photo_slots_blocked.png` shows where the decals would sit. The dashed boxes are only on that preview.
-
-To add the real photographs later, put the originals in `photos/originals/` using the names in that folder's README, then run:
-
-```bash
-python3 designs/modely-2024-forged-carbon/generate_wrap.py --with-photos
-```
-
-The command exits 2 and leaves the wrap carbon-only when any original is missing, too small, or not a decodable image. A partial set is not composited.
+`--carbon-only` rebuilds the wrap without the decals. If an original is missing or fails validation, the generator does not fill the gap with a drawn person; it leaves the carbon in place and exits 2.
 
 ## Regenerate
 

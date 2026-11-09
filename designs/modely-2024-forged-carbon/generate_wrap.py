@@ -66,15 +66,26 @@ def build_wrap(enable_photos: bool = False, originals: Path | None = None) -> tu
     )
     if status["wrap_contains_photos"] != incorporated:
         raise RuntimeError("photo status does not match the image that was built")
-    coverage = coverage_report(template, rgba, panels)
+    coverage = coverage_report(template, rgba, panels, slots)
     return rgba, status, coverage
 
 
-def coverage_report(template: np.ndarray, rgba: np.ndarray, panels: dict[str, np.ndarray]) -> dict:
+def coverage_report(
+    template: np.ndarray,
+    rgba: np.ndarray,
+    panels: dict[str, np.ndarray],
+    slots: list[dict] | None = None,
+) -> dict:
     paintable = paintable_mask(template)
     rgb = rgba[:, :, :3]
     near_white = (rgb[:, :, 0] >= 250) & (rgb[:, :, 1] >= 250) & (rgb[:, :, 2] >= 250)
-    unfilled = paintable & near_white
+    photo_slots = np.zeros(paintable.shape, dtype=bool)
+    for slot in slots or []:
+        x0, y0, x1, y1 = slot["rect"]
+        photo_slots[y0:y1, x0:x1] = True
+    # Bright pixels inside a decal are part of the photograph. Unfilled means
+    # template white left on the carbon itself.
+    unfilled = paintable & near_white & ~photo_slots
     panel_rows = {}
     for name, mask in panels.items():
         panel_rows[name] = {
@@ -88,6 +99,7 @@ def coverage_report(template: np.ndarray, rgba: np.ndarray, panels: dict[str, np
         "size": [int(template.shape[1]), int(template.shape[0])],
         "paintable_pixels": int(paintable.sum()),
         "unfilled_white_pixels": int(unfilled.sum()),
+        "bright_pixels_inside_photo_slots": int((paintable & near_white & photo_slots).sum()),
         "transparent_pixels_cleared": int((rgba[:, :, 3] == 0).sum()),
         "max_channel": int(rgb.max()),
         "mean_paintable_rgb": [round(float(v), 2) for v in rgb[paintable].mean(axis=0)],
@@ -160,7 +172,13 @@ def _dashed_rect(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], colo
     segments(y0, y1, False, x1)
 
 
-def write_previews(rgba: np.ndarray, panels: dict[str, np.ndarray], slots: list[dict], field_u8: np.ndarray) -> None:
+def write_previews(
+    rgba: np.ndarray,
+    panels: dict[str, np.ndarray],
+    slots: list[dict],
+    field_u8: np.ndarray,
+    photos_applied: bool,
+) -> None:
     PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
     paintable = rgba[:, :, 3] > 0
     panel_rgb = np.zeros((rgba.shape[0], rgba.shape[1], 3), dtype=np.uint8)
@@ -179,7 +197,11 @@ def write_previews(rgba: np.ndarray, panels: dict[str, np.ndarray], slots: list[
     coverage = np.full((*paintable.shape, 3), 18, dtype=np.uint8)
     coverage[paintable] = (36, 150, 78)
     near_white = (rgba[:, :, 0] >= 250) & (rgba[:, :, 1] >= 250) & (rgba[:, :, 2] >= 250)
-    coverage[paintable & near_white] = (220, 48, 48)
+    photo_slots = np.zeros(paintable.shape, dtype=bool)
+    for slot in slots:
+        x0, y0, x1, y1 = slot["rect"]
+        photo_slots[y0:y1, x0:x1] = True
+    coverage[paintable & near_white & ~photo_slots] = (220, 48, 48)
     Image.fromarray(coverage, "RGB").save(PREVIEW_DIR / "coverage.png", optimize=True)
 
     crops = []
@@ -218,20 +240,58 @@ def write_previews(rgba: np.ndarray, panels: dict[str, np.ndarray], slots: list[
         x0, y0, x1, y1 = slot["rect"]
         _dashed_rect(draw, (x0, y0, x1, y1), (255, 176, 48))
         draw.text((x0 + 8, y0 + 6), str(index), fill=(255, 196, 80), font=number_font)
-    slot_lines = [
-        ("#Photo slots blocked", None),
-        ("Guides only. The wrap PNG", None),
-        ("does not contain photos.", None),
-        ("", None),
-    ]
+    if photos_applied:
+        slot_lines = [
+            ("#Photo decals", None),
+            ("These are the supplied", None),
+            ("original photographs.", None),
+            ("", None),
+        ]
+        placement_note = "IN THE WRAP"
+    else:
+        slot_lines = [
+            ("#Photo slots blocked", None),
+            ("Guides only. The wrap PNG", None),
+            ("does not contain photos.", None),
+            ("", None),
+        ]
+        placement_note = "ORIGINAL FILE REQUIRED"
     for index, slot in enumerate(slots, start=1):
         slot_lines.append((f"{index}. {slot['panel']}", (255, 176, 48)))
         for chunk in _wrap_text(slot["description"], 32):
             slot_lines.append((chunk, None))
-        slot_lines.append(("ORIGINAL FILE REQUIRED", None))
+        slot_lines.append((placement_note, None))
         slot_lines.append(("", None))
     blocked = _legend_canvas(guide, slot_lines)
-    blocked.save(PREVIEW_DIR / "photo_slots_blocked.png", optimize=True)
+    blocked.save(PREVIEW_DIR / "photo_slots.png", optimize=True)
+    stale_blocked = PREVIEW_DIR / "photo_slots_blocked.png"
+    if photos_applied:
+        if stale_blocked.exists():
+            stale_blocked.unlink()
+    else:
+        blocked.save(stale_blocked, optimize=True)
+
+    details = []
+    labels = []
+    for slot in slots:
+        x0, y0, x1, y1 = slot["rect"]
+        crop = Image.fromarray(rgba[y0:y1, x0:x1, :3], "RGB")
+        crop = crop.resize((crop.width * 3, crop.height * 3), Image.Resampling.NEAREST)
+        details.append(crop)
+        labels.append(slot["id"])
+    if details:
+        gap = 16
+        width = sum(crop.width for crop in details) + gap * (len(details) + 1)
+        height = max(crop.height for crop in details) + 48
+        sheet = Image.new("RGB", (width, height), (12, 12, 14))
+        draw = ImageDraw.Draw(sheet)
+        font = _font(18, bold=True)
+        x = gap
+        for crop, label in zip(details, labels):
+            sheet.paste(crop, (x, 36))
+            draw.text((x, 8), label, fill=(230, 230, 232), font=font)
+            x += crop.width + gap
+        sheet.save(PREVIEW_DIR / "photo_details.png", optimize=True)
 
 
 def _wrap_text(text: str, limit: int) -> list[str]:
@@ -253,14 +313,20 @@ def _wrap_text(text: str, limit: int) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Generate the 2024 Model Y forged-carbon wrap.")
     parser.add_argument(
+        "--carbon-only",
+        action="store_true",
+        help="Leave the three photographs out of the wrap.",
+    )
+    parser.add_argument(
         "--with-photos",
         action="store_true",
-        help="Composite originals from photos/originals/. Exits 2 when those files are not usable.",
+        help="Composite originals from photos/originals/. This is the default.",
     )
     parser.add_argument("--out", type=Path, default=EXAMPLE_PATH)
     args = parser.parse_args(argv)
+    enable_photos = not args.carbon_only
 
-    rgba, status, coverage = build_wrap(enable_photos=args.with_photos)
+    rgba, status, coverage = build_wrap(enable_photos=enable_photos)
     size = save_png(args.out, rgba)
     coverage["output"] = str(args.out.relative_to(REPO_ROOT) if args.out.is_relative_to(REPO_ROOT) else args.out)
     coverage["file_bytes"] = size
@@ -276,7 +342,7 @@ def main(argv: list[str] | None = None) -> int:
     panels = classify_panels(template)
     # Rebuild the carbon field for the seamless preview. Photo pixels, if any, stay out of that tile.
     field = render_u8(template.shape[0])
-    write_previews(rgba, panels, status["slots"], field)
+    write_previews(rgba, panels, status["slots"], field, photos_applied=status["wrap_contains_photos"])
 
     print(f"wrote {args.out} ({size} bytes)")
     print(f"photo_incorporation={status['photo_incorporation']} contains_photos={status['wrap_contains_photos']}")
@@ -284,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:
     if size > MAX_BYTES:
         print(f"file exceeds {MAX_BYTES} bytes", file=sys.stderr)
         return 1
-    if args.with_photos and not status["wrap_contains_photos"]:
+    if enable_photos and not status["wrap_contains_photos"]:
         print(status["reason"], file=sys.stderr)
         for item in status["missing"]:
             print(f"missing: {item}", file=sys.stderr)

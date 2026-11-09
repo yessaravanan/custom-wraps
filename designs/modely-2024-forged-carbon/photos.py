@@ -30,21 +30,27 @@ PHOTO_SPECS = (
         "filename_stem": "child_giant_tire",
         "description": "Original photo of the child in a giant tire",
         "panel": "front_door_left",
-        "aspect_h_over_w": 1.28,
+        "aspect_h_over_w": 1.33,
+        # Portrait photo, child centered in the tire.
+        "focal": (0.50, 0.47),
     },
     {
         "id": "child_halloween_truck",
         "filename_stem": "child_halloween_truck",
         "description": "Original photo of the child beside the purple Halloween inflatable truck",
-        "panel": "front_door_right",
-        "aspect_h_over_w": 1.28,
+        "panel": "roof",
+        "aspect_h_over_w": 0.75,
+        # Landscape photo. The roof island keeps the child and the inflatable in frame.
+        "focal": (0.46, 0.58),
     },
     {
         "id": "child_monster_truck",
         "filename_stem": "child_monster_truck",
         "description": "Original photo of the child beside the real monster truck",
         "panel": "trunk",
-        "aspect_h_over_w": 0.68,
+        "aspect_h_over_w": 0.75,
+        # Child stands low in the frame, so the crop favors the lower half.
+        "focal": (0.58, 0.66),
     },
 )
 
@@ -157,20 +163,23 @@ def build_slots(panel_masks: dict[str, np.ndarray], solid: np.ndarray) -> list[d
                 "panel": spec["panel"],
                 "aspect_h_over_w": spec["aspect_h_over_w"],
                 "rect": [int(x0), int(y0), int(x1), int(y1)],
+                "focal": [float(v) for v in spec["focal"]],
             }
         )
     return slots
 
 
-def cover_crop(image: Image.Image, width: int, height: int) -> np.ndarray:
+def cover_crop(image: Image.Image, width: int, height: int, focal: tuple[float, float] = (0.5, 0.5)) -> np.ndarray:
+    """Scale to cover the slot and keep `focal` (0..1 in the source) inside the window."""
     source_w, source_h = image.size
     scale = max(width / source_w, height / source_h)
-    resized = image.resize(
-        (max(width, int(round(source_w * scale))), max(height, int(round(source_h * scale)))),
-        Image.Resampling.LANCZOS,
-    )
-    left = (resized.size[0] - width) // 2
-    top = (resized.size[1] - height) // 2
+    resized_w = max(width, int(round(source_w * scale)))
+    resized_h = max(height, int(round(source_h * scale)))
+    resized = image.resize((resized_w, resized_h), Image.Resampling.LANCZOS)
+    left = int(round(float(focal[0]) * resized_w - width / 2))
+    top = int(round(float(focal[1]) * resized_h - height / 2))
+    left = min(max(left, 0), resized_w - width)
+    top = min(max(top, 0), resized_h - height)
     cropped = resized.crop((left, top, left + width, top + height))
     return np.asarray(cropped, dtype=np.uint8)
 
@@ -195,7 +204,8 @@ def composite_photos(
         x0, y0, x1, y1 = slot["rect"]
         width = x1 - x0
         height = y1 - y0
-        cropped = cover_crop(photo, width, height).astype(np.float32)
+        focal = slot.get("focal", (0.5, 0.5))
+        cropped = cover_crop(photo, width, height, (float(focal[0]), float(focal[1]))).astype(np.float32)
         alpha = _slot_alpha(height, width)[..., None]
         base = painted[y0:y1, x0:x1].astype(np.float32)
         blended = cropped * alpha + base * (1.0 - alpha)

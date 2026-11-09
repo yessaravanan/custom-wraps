@@ -112,19 +112,27 @@ class WrapTests(unittest.TestCase):
             reloaded = np.array(Image.open(path))
             self.assertEqual(reloaded.shape, (1024, 1024, 4))
 
-    def test_repository_has_no_matching_originals(self):
-        rgba, status, _coverage = build_wrap(enable_photos=False)
-        self.assertEqual(status["photo_incorporation"], "blocked")
-        self.assertFalse(status["wrap_contains_photos"])
-        self.assertEqual(status["repository_exact_matches"], [])
-        self.assertEqual(status["repository_loose_name_matches"], [])
-        self.assertEqual(status["missing"], [spec["id"] for spec in __import__("photos").PHOTO_SPECS])
-        self.assertTrue(np.array_equal(rgba[:, :, :3], self.rgba[:, :, :3]))
-
-    def test_committed_example_is_carbon_only(self):
+    def test_supplied_originals_are_in_the_wrap(self):
+        rgba, status, _coverage = build_wrap(enable_photos=True)
+        self.assertEqual(status["photo_incorporation"], "incorporated")
+        self.assertTrue(status["wrap_contains_photos"])
+        self.assertEqual(status["missing"], [])
+        self.assertEqual(status["invalid"], [])
+        stems = {Path(path).stem for path in status["repository_exact_matches"]}
+        self.assertEqual(
+            stems,
+            {"child_giant_tire", "child_halloween_truck", "child_monster_truck"},
+        )
+        changed = np.any(rgba[:, :, :3] != self.rgba[:, :, :3], axis=2)
+        slot_union = np.zeros(changed.shape, dtype=bool)
+        for slot in status["slots"]:
+            x0, y0, x1, y1 = slot["rect"]
+            slot_union[y0:y1, x0:x1] = True
+            self.assertTrue(bool(changed[y0 + 8 : y1 - 8, x0 + 8 : x1 - 8].all()), slot["id"])
+        self.assertFalse(bool(changed[~slot_union].any()))
         self.assertTrue(EXAMPLE_PATH.is_file(), "run generate_wrap.py before the tests")
         committed = np.array(Image.open(EXAMPLE_PATH))
-        self.assertTrue(np.array_equal(committed, self.rgba))
+        self.assertTrue(np.array_equal(committed, rgba))
         self.assertLessEqual(EXAMPLE_PATH.stat().st_size, MAX_BYTES)
 
     def test_missing_and_partial_photos_do_not_composite(self):
