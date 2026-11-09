@@ -11,135 +11,135 @@
   "transparent_pixels_cleared": 563973,
   "max_channel": 255,
   "mean_paintable_rgb": [
-    50.77,
-    53.14,
-    55.83
+    94.32,
+    98.35,
+    103.25
   ],
   "panels": {
     "front_fender_left": {
       "pixels": 23416,
       "unfilled_white": 0,
       "mean_rgb": [
-        46.08,
-        49.77,
-        53.78
+        101.32,
+        107.06,
+        113.9
       ]
     },
     "front_bumper": {
       "pixels": 56455,
       "unfilled_white": 0,
       "mean_rgb": [
-        46.36,
-        50.07,
-        54.12
+        101.35,
+        107.03,
+        113.69
       ]
     },
     "front_fender_right": {
       "pixels": 23569,
       "unfilled_white": 0,
       "mean_rgb": [
-        41.44,
-        44.75,
-        48.42
+        98.99,
+        104.61,
+        111.26
       ]
     },
     "lower_body": {
       "pixels": 113347,
       "unfilled_white": 0,
       "mean_rgb": [
-        54.07,
-        56.74,
-        59.13
+        103.97,
+        108.41,
+        113.09
       ]
     },
     "hood": {
       "pixels": 56492,
       "unfilled_white": 0,
       "mean_rgb": [
-        67.86,
-        65.83,
-        69.21
+        91.14,
+        90.05,
+        94.67
       ]
     },
     "front_door_right": {
       "pixels": 43944,
       "unfilled_white": 0,
       "mean_rgb": [
-        42.17,
-        45.56,
-        49.27
+        79.95,
+        84.88,
+        90.75
       ]
     },
     "front_door_left": {
       "pixels": 43913,
       "unfilled_white": 0,
       "mean_rgb": [
-        70.01,
-        70.79,
-        66.89
+        103.89,
+        105.92,
+        103.7
       ]
     },
     "mirror_right": {
       "pixels": 3032,
       "unfilled_white": 0,
       "mean_rgb": [
-        47.13,
-        50.96,
-        55.08
+        74.97,
+        79.79,
+        85.39
       ]
     },
     "mirror_left": {
       "pixels": 2983,
       "unfilled_white": 0,
       "mean_rgb": [
-        33.5,
-        36.24,
-        39.25
+        112.13,
+        118.22,
+        125.37
       ]
     },
     "rear_door_left": {
       "pixels": 36819,
       "unfilled_white": 0,
       "mean_rgb": [
-        42.06,
-        45.42,
-        49.1
+        79.89,
+        84.81,
+        90.63
       ]
     },
     "rear_door_right": {
       "pixels": 36788,
       "unfilled_white": 0,
       "mean_rgb": [
-        43.8,
-        47.3,
-        51.13
+        80.68,
+        85.63,
+        91.49
       ]
     },
     "rear_quarter_left": {
       "pixels": 21900,
       "unfilled_white": 0,
       "mean_rgb": [
-        29.89,
-        32.29,
-        34.99
+        60.61,
+        64.77,
+        69.62
       ]
     },
     "rear_quarter_right": {
       "pixels": 21945,
       "unfilled_white": 0,
       "mean_rgb": [
-        44.79,
-        48.37,
-        52.29
+        112.61,
+        118.65,
+        125.7
       ]
     },
     "trunk": {
       "pixels": 48892,
       "unfilled_white": 0,
       "mean_rgb": [
-        66.43,
-        67.92,
-        68.31
+        115.54,
+        118.76,
+        121.27
       ]
     }
   },
@@ -151,7 +151,7 @@
     "Front bumper, hood, trunk, doors, and the other islands sample one periodic carbon field."
   ],
   "output": "modely/example/Forged_Carbon.png",
-  "file_bytes": 928338,
+  "file_bytes": 964031,
   "within_1mb": true,
   "photo_incorporation": "incorporated",
   "wrap_contains_photos": true

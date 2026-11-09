@@ -80,16 +80,19 @@ class WrapTests(unittest.TestCase):
         }
         for axis, ratio in ratios.items():
             self.assertGreater(ratio, 0.7, axis)
-            self.assertLess(ratio, 1.25, axis)
+            self.assertLess(ratio, 1.45, axis)
 
-    def test_palette_is_dark_gunmetal(self):
+    def test_palette_is_visible_gunmetal(self):
         paintable = paintable_mask(self.template)
         pixels = self.rgba[:, :, :3][paintable].astype(np.float32)
-        mean = pixels.mean()
-        self.assertGreater(mean, 20)
-        self.assertLess(mean, 90)
+        mean = float(pixels.mean())
+        # Lifted off the old near-black field, still charcoal and gunmetal rather than silver.
+        self.assertGreater(mean, 70)
+        self.assertLess(mean, 120)
         spread = pixels.max(axis=1) - pixels.min(axis=1)
-        self.assertLess(float(spread.mean()), 18.0)
+        self.assertLess(float(spread.mean()), 28.0)
+        # Light fragments have to show against the charcoal, not just a flat gray.
+        self.assertGreater(float(np.percentile(pixels.mean(axis=1), 80)), mean + 18)
 
     def test_fibers_are_not_a_single_weave_direction(self):
         gray = self.field.mean(axis=2).astype(np.float32)

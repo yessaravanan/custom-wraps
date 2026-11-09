@@ -9,7 +9,7 @@ The finished example is `modely/example/Forged_Carbon.png`.
 Tesla's template is a 1024×1024 visualization UV for Toybox → Paint Shop. White-looking islands in `modely/template.png` are the paintable body panels (every pixel with alpha above zero). This design fills those islands with one periodic forged-carbon field:
 
 - chopped tow, not a woven twill
-- irregular flakes of dark gunmetal gray and deep black charcoal
+- mid and light gunmetal flakes marbled through deep charcoal, with clearcoat highlights
 - fiber direction changes from flake to flake
 - a clearcoat sheen for layered gloss
 - the same scale and phase on the hood, roof, trunk, both doors, and the remaining islands

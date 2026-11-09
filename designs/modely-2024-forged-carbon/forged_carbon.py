@@ -11,8 +11,9 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 
 SEED = 2024
-QUANTIZE_STEP = 4
-MAX_CHANNEL = 168
+QUANTIZE_STEP = 6
+# Gloss peaks stay below the near-white test so highlights never read as unfilled template.
+MAX_CHANNEL = 200
 
 
 def _uhash(ix: np.ndarray, iy: np.ndarray, k: int, seed: int) -> np.ndarray:
@@ -150,9 +151,11 @@ def _paint_layer(flakes: dict, marble: np.ndarray) -> tuple[np.ndarray, np.ndarr
     strand_fine = np.sin(projection * flakes["frequency"] * 2.1 + flakes["phase"] * 1.3)
     fiber = np.clip(0.5 + 0.5 * (0.78 * strand + 0.22 * strand_fine), 0.0, 1.0)
     fiber = np.clip((fiber - 0.35) / 0.65, 0.0, 1.0) ** 0.55
-    gunmetal_probability = 0.16 + 0.64 * marble
-    is_gunmetal = flakes["shade"] < gunmetal_probability
-    tone = np.where(is_gunmetal, 0.50 + 0.50 * flakes["shade"], 0.02 + 0.08 * flakes["shade"])
+    # Marble clusters the lighter tows. Charcoal stays in the pockets; mid and light gunmetal carry the pattern.
+    roll = np.clip(0.50 * flakes["shade"] + 0.50 * marble, 0.0, 1.0)
+    light = roll > 0.66
+    mid = (roll > 0.42) & ~light
+    tone = np.where(light, 0.90 + 0.10 * flakes["shade"], np.where(mid, 0.42 + 0.16 * flakes["shade"], 0.02 + 0.08 * flakes["shade"]))
     return tone, fiber, mask
 
 
@@ -171,37 +174,39 @@ def render_field(size: int = 1024, seed: int = SEED) -> np.ndarray:
         (_flakes(size, 16, 2, seed + 29, cover=0.82), marble * 0.85, 0.42),
     )
     grain = lattice_noise(size, _cell_count(size, max(8, size // 16)), seed + 5)
-    rgb = np.array([7.0, 8.0, 9.0]) + grain[..., None] * np.array([7.0, 7.5, 8.0])
-    charcoal = np.array([15.0, 16.0, 17.0])
-    gunmetal = np.array([108.0, 116.0, 124.0])
+    rgb = np.array([12.0, 13.0, 15.0]) + grain[..., None] * np.array([6.0, 7.0, 8.0])
+    charcoal = np.array([22.0, 24.0, 26.0])
+    gunmetal = np.array([176.0, 184.0, 194.0])
     for flakes, marble_layer, opacity in layers:
         tone, fiber, mask = _paint_layer(flakes, marble_layer)
         chip = charcoal + (gunmetal - charcoal) * tone[..., None]
-        lift = (fiber - 0.25) * (16.0 + 36.0 * tone)
+        lift = (fiber - 0.22) * (14.0 + 36.0 * tone)
         chip = chip + lift[..., None] * np.array([0.90, 1.0, 1.12])
         alpha = (mask * opacity)[..., None]
         rgb = chip * alpha + rgb * (1.0 - alpha)
 
     luma = rgb.mean(axis=2)
-    height = gaussian_filter(luma, sigma=0.75, mode="wrap")
+    height = gaussian_filter(luma, sigma=0.7, mode="wrap")
     gy = (np.roll(height, -1, axis=0) - np.roll(height, 1, axis=0)) * 0.5
     gx = (np.roll(height, -1, axis=1) - np.roll(height, 1, axis=1)) * 0.5
-    facing = np.clip((-gx * 0.85 - gy * 0.50) / (np.hypot(gx, gy) + 5.0) + 0.25, 0.0, 1.0)
-    specular = facing ** 4
+    facing = np.clip((-gx * 1.05 - gy * 0.62) / (np.hypot(gx, gy) + 3.5) + 0.08, 0.0, 1.0)
+    specular = facing ** 3.2
+    sharp = facing ** 14
     sheen_sigma = max(10, size // 40)
     sheen = gaussian_filter(luma, sigma=sheen_sigma, mode="wrap")
     sy = (np.roll(sheen, -1, axis=0) - np.roll(sheen, 1, axis=0)) * 0.5
     sx = (np.roll(sheen, -1, axis=1) - np.roll(sheen, 1, axis=1)) * 0.5
-    broad = np.clip(0.32 + (-sx * 1.45 - sy * 0.72) / (size * 0.018), 0.0, 1.0) ** 1.15
-    rgb = rgb * (0.76 + 0.42 * broad[..., None])
-    rgb = rgb + (24.0 * specular)[..., None] * np.array([0.75, 0.84, 1.0])
+    broad = np.clip(0.25 + (-sx * 1.6 - sy * 0.8) / (size * 0.016), 0.0, 1.0) ** 1.1
+    rgb = rgb * (0.98 + 0.16 * broad[..., None])
+    highlight = np.array([0.82, 0.90, 1.0])
+    rgb = rgb + (18.0 * specular + 34.0 * sharp)[..., None] * highlight
     micro = lattice_noise(size, _cell_count(size, max(16, size // 6)), seed + 77)
-    rgb = rgb + (7.0 * (micro ** 3))[..., None] * np.array([0.80, 0.86, 1.0])
+    rgb = rgb + (8.0 * (micro ** 2.6))[..., None] * np.array([0.82, 0.88, 1.0])
     return np.clip(rgb, 0.0, MAX_CHANNEL)
 
 
 def field_to_u8(field: np.ndarray, step: int = QUANTIZE_STEP) -> np.ndarray:
-    """Quantize to 8-bit. Step 4 keeps the PNG under the 1 MB Paint Shop limit."""
+    """Quantize to 8-bit. Step 6 keeps the PNG under the 1 MB Paint Shop limit."""
     values = np.clip(np.rint(field), 0, MAX_CHANNEL).astype(np.uint8)
     if step > 1:
         values = (values // np.uint8(step)) * np.uint8(step)
