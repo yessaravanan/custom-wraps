@@ -21,6 +21,7 @@ Download the template below and customize it with your own design. For complete 
 <a href="example/Doge.png"><img src="example/Doge.png" width="150"/></a>
 <a href="example/Dot_Matrix.png"><img src="example/Dot_Matrix.png" width="150"/></a>
 <a href="example/Forged_Carbon.png"><img src="example/Forged_Carbon.png" width="150"/></a>
+<a href="example/Halloween_Purple.png"><img src="example/Halloween_Purple.png" width="150"/></a>
 <a href="example/Ice_Cream.png"><img src="example/Ice_Cream.png" width="150"/></a>
 <a href="example/Leopard.png"><img src="example/Leopard.png" width="150"/></a>
 <a href="example/Pixel_Art.png"><img src="example/Pixel_Art.png" width="150"/></a>
