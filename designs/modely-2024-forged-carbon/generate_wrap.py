@@ -111,7 +111,7 @@ def coverage_report(
         "notes": [
             "Paint Shop visualization UV at the template resolution (1024x1024), not a measured vinyl cut file.",
             "The repository does not publish verified body-panel dimensions in millimeters.",
-            "Hood, roof, trunk, doors, and the other islands sample one periodic carbon field.",
+            "Front bumper, hood, trunk, doors, and the other islands sample one periodic carbon field.",
         ],
     }
 
@@ -206,7 +206,7 @@ def write_previews(
 
     crops = []
     labels = []
-    for name in ("hood", "roof", "front_door_left", "trunk"):
+    for name in ("front_bumper", "hood", "front_door_left", "trunk"):
         ys, xs = np.where(panels[name])
         cx, cy = int(xs.mean()), int(ys.mean())
         half = 110

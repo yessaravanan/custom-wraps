@@ -24,11 +24,11 @@ Paint Shop limits followed here: PNG, 1024×1024, at most 1 MB, filename `Forged
 
 | Original | Placement | Why this island |
 | --- | --- | --- |
-| `photos/originals/child_giant_tire.jpg` | Front door, image left | Portrait photo, child centered in the tire |
-| `photos/originals/child_halloween_truck.jpg` | Roof | Landscape photo; this island keeps the child and the purple inflatable together |
-| `photos/originals/child_monster_truck.jpg` | Trunk | Landscape photo; the child stays in the lower part of the frame |
+| `photos/originals/child_giant_tire.jpg` | Front door, image left, quarter-turned so the head points at the center of the template | That edge is the top of the door on the car |
+| `photos/originals/child_halloween_truck.jpg` | Hood, turned halfway around | Image-up on the hood is the front bumper, so the head points toward the windshield |
+| `photos/originals/child_monster_truck.jpg` | Trunk, upright in the file | Image-up on the liftgate is the rear window |
 
-Each decal is inset inside its panel, cover-cropped around that subject, and edged with a dark gunmetal frame so the carbon remains the ground. The Paint Shop UV is 1024×1024, so the decals are small on the template. `previews/photo_details.png` shows those slots enlarged. `photos/STATUS.json` records each file's sha256.
+The flat file will show the door photo on its side and the hood photo upside down. That is the orientation the Paint Shop UV uses. On the car, the head is toward the window on the door and toward the windshield on the hood. Each decal is inset inside its panel and edged with a dark gunmetal frame. `previews/photo_details.png` shows the slots enlarged. `photos/STATUS.json` records each file's sha256.
 
 `--carbon-only` rebuilds the wrap without the decals. If an original is missing or fails validation, the generator does not fill the gap with a drawn person; it leaves the carbon in place and exits 2.
 

@@ -17,8 +17,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 TEMPLATE_PATH = REPO_ROOT / "modely" / "template.png"
 
 PANEL_COLORS = {
-    "hood": (70, 170, 220),
-    "roof": (150, 80, 210),
+    "front_bumper": (70, 170, 220),
+    "hood": (150, 80, 210),
     "trunk": (240, 180, 50),
     "front_door_left": (70, 110, 230),
     "front_door_right": (230, 120, 170),
@@ -34,8 +34,8 @@ PANEL_COLORS = {
 }
 
 REQUIRED_COVERAGE = (
+    "front_bumper",
     "hood",
-    "roof",
     "trunk",
     "front_door_left",
     "front_door_right",
@@ -100,9 +100,11 @@ def _component_name(area: int, cx: float, cy: float) -> str:
             return "rear_door_right"
         return "rear_quarter_right"
     if cy < 160 and 360 < cx < 660:
-        return "hood"
+        # Short band across the nose. The large arch below it is the hood.
+        return "front_bumper"
     if 180 < cy < 420 and area > 40000:
-        return "roof"
+        # Hood. Its curved lower edge is the windshield, so image-down is up on the car.
+        return "hood"
     if area > 80000:
         return "lower_body"
     raise RuntimeError(f"unclassified island area={area} centroid=({cx:.1f},{cy:.1f})")

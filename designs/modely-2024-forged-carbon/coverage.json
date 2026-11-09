@@ -7,13 +7,13 @@
   ],
   "paintable_pixels": 484603,
   "unfilled_white_pixels": 0,
-  "bright_pixels_inside_photo_slots": 28,
+  "bright_pixels_inside_photo_slots": 22,
   "transparent_pixels_cleared": 563973,
   "max_channel": 255,
   "mean_paintable_rgb": [
-    53.03,
-    55.17,
-    57.2
+    50.77,
+    53.14,
+    55.83
   ],
   "panels": {
     "front_fender_left": {
@@ -25,7 +25,7 @@
         53.78
       ]
     },
-    "hood": {
+    "front_bumper": {
       "pixels": 56455,
       "unfilled_white": 0,
       "mean_rgb": [
@@ -52,7 +52,7 @@
         59.13
       ]
     },
-    "roof": {
+    "hood": {
       "pixels": 56492,
       "unfilled_white": 0,
       "mean_rgb": [
@@ -74,9 +74,9 @@
       "pixels": 43913,
       "unfilled_white": 0,
       "mean_rgb": [
-        94.94,
-        93.2,
-        81.99
+        70.01,
+        70.79,
+        66.89
       ]
     },
     "mirror_right": {
@@ -148,10 +148,10 @@
   "notes": [
     "Paint Shop visualization UV at the template resolution (1024x1024), not a measured vinyl cut file.",
     "The repository does not publish verified body-panel dimensions in millimeters.",
-    "Hood, roof, trunk, doors, and the other islands sample one periodic carbon field."
+    "Front bumper, hood, trunk, doors, and the other islands sample one periodic carbon field."
   ],
   "output": "modely/example/Forged_Carbon.png",
-  "file_bytes": 948680,
+  "file_bytes": 928338,
   "within_1mb": true,
   "photo_incorporation": "incorporated",
   "wrap_contains_photos": true

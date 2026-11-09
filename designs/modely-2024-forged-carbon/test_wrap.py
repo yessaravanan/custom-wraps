@@ -181,8 +181,29 @@ class WrapTests(unittest.TestCase):
                 self.assertTrue(bool(changed[y0 + 12 : y1 - 12, x0 + 12 : x1 - 12].all()))
                 self.assertTrue(bool(self.panels[slot["panel"]][y0:y1, x0:x1].all()))
             self.assertFalse(bool(changed[~slot_union].any()))
-            # Hood stays carbon. The monster-truck slot is on the trunk, not the hood.
-            self.assertTrue(np.array_equal(painted[self.panels["hood"]], carbon[self.panels["hood"]]))
+            # The front bumper has no decal. The monster-truck slot is on the trunk.
+            self.assertTrue(
+                np.array_equal(painted[self.panels["front_bumper"]], carbon[self.panels["front_bumper"]])
+            )
+
+    def test_decals_follow_panel_orientation(self):
+        rgba, status, _coverage = build_wrap(enable_photos=True)
+        slots = {slot["id"]: slot for slot in status["slots"]}
+        tire = slots["child_giant_tire"]["rect"]
+        door = rgba[tire[1] : tire[3], tire[0] : tire[2], :3].astype(np.float32)
+        # Quarter-turn clockwise puts the sky on the center side and the grass on the outer side.
+        grass = door[:, :16, 0] - door[:, :16, 2]
+        sky = door[:, -16:, 0] - door[:, -16:, 2]
+        self.assertGreater(float(grass.mean()), float(sky.mean()) + 15)
+
+        hood = slots["child_halloween_truck"]["rect"]
+        hood_px = rgba[hood[1] : hood[3], hood[0] : hood[2], :3].astype(np.float32)
+        # Half-turn puts the bright field at the windshield edge, the bottom of this island.
+        self.assertGreater(float(hood_px[-14:].mean()), float(hood_px[:14].mean()) + 20)
+
+        trunk = slots["child_monster_truck"]["rect"]
+        trunk_px = rgba[trunk[1] : trunk[3], trunk[0] : trunk[2], :3].astype(np.float32)
+        self.assertGreater(float(trunk_px[:12].mean()), float(trunk_px[-12:].mean()))
 
     def test_compositor_refuses_to_invent_a_partial_result(self):
         slots = [

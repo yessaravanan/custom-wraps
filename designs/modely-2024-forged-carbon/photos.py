@@ -30,18 +30,24 @@ PHOTO_SPECS = (
         "filename_stem": "child_giant_tire",
         "description": "Original photo of the child in a giant tire",
         "panel": "front_door_left",
-        "aspect_h_over_w": 1.33,
+        # After the quarter-turn, the portrait becomes a wide decal whose long side
+        # runs from the window toward the sill.
+        "aspect_h_over_w": 0.75,
         # Portrait photo, child centered in the tire.
         "focal": (0.50, 0.47),
+        # Side panels fold outward. Clockwise puts the head toward the template center,
+        # which is up on the door. Measured against the official TESLA door lettering.
+        "rotation_cw": 90,
     },
     {
         "id": "child_halloween_truck",
         "filename_stem": "child_halloween_truck",
         "description": "Original photo of the child beside the purple Halloween inflatable truck",
-        "panel": "roof",
+        "panel": "hood",
         "aspect_h_over_w": 0.75,
-        # Landscape photo. The roof island keeps the child and the inflatable in frame.
         "focal": (0.46, 0.58),
+        # The hood's image-up is the front bumper. Half a turn puts the head toward the windshield.
+        "rotation_cw": 180,
     },
     {
         "id": "child_monster_truck",
@@ -51,6 +57,8 @@ PHOTO_SPECS = (
         "aspect_h_over_w": 0.75,
         # Child stands low in the frame, so the crop favors the lower half.
         "focal": (0.58, 0.66),
+        # Image-up on the liftgate is the rear window, so the photo stays upright.
+        "rotation_cw": 0,
     },
 )
 
@@ -164,9 +172,36 @@ def build_slots(panel_masks: dict[str, np.ndarray], solid: np.ndarray) -> list[d
                 "aspect_h_over_w": spec["aspect_h_over_w"],
                 "rect": [int(x0), int(y0), int(x1), int(y1)],
                 "focal": [float(v) for v in spec["focal"]],
+                "rotation_cw": int(spec["rotation_cw"]),
             }
         )
     return slots
+
+
+def rotate_clockwise(image: Image.Image, degrees: int) -> Image.Image:
+    degrees = degrees % 360
+    if degrees == 0:
+        return image
+    if degrees == 90:
+        return image.transpose(Image.Transpose.ROTATE_270)
+    if degrees == 180:
+        return image.transpose(Image.Transpose.ROTATE_180)
+    if degrees == 270:
+        return image.transpose(Image.Transpose.ROTATE_90)
+    raise ValueError(f"rotation must be a quarter turn, got {degrees}")
+
+
+def rotate_focal(focal: tuple[float, float], degrees: int) -> tuple[float, float]:
+    """Map a focal point into the image produced by rotate_clockwise."""
+    x, y = float(focal[0]), float(focal[1])
+    degrees = degrees % 360
+    if degrees == 90:
+        return (1.0 - y, x)
+    if degrees == 180:
+        return (1.0 - x, 1.0 - y)
+    if degrees == 270:
+        return (y, 1.0 - x)
+    return (x, y)
 
 
 def cover_crop(image: Image.Image, width: int, height: int, focal: tuple[float, float] = (0.5, 0.5)) -> np.ndarray:
@@ -204,8 +239,10 @@ def composite_photos(
         x0, y0, x1, y1 = slot["rect"]
         width = x1 - x0
         height = y1 - y0
-        focal = slot.get("focal", (0.5, 0.5))
-        cropped = cover_crop(photo, width, height, (float(focal[0]), float(focal[1]))).astype(np.float32)
+        rotation = int(slot.get("rotation_cw", 0))
+        oriented = rotate_clockwise(photo, rotation)
+        focal = rotate_focal(tuple(slot.get("focal", (0.5, 0.5))), rotation)
+        cropped = cover_crop(oriented, width, height, focal).astype(np.float32)
         alpha = _slot_alpha(height, width)[..., None]
         base = painted[y0:y1, x0:x1].astype(np.float32)
         blended = cropped * alpha + base * (1.0 - alpha)

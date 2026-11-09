@@ -16,7 +16,7 @@
     {
       "id": "child_halloween_truck",
       "description": "Original photo of the child beside the purple Halloween inflatable truck",
-      "panel": "roof",
+      "panel": "hood",
       "expected_stem": "child_halloween_truck",
       "path": "designs/modely-2024-forged-carbon/photos/originals/child_halloween_truck.jpg",
       "sha256": "76f74a00341704f1cd02e1c8d2d1788a92d147074458d66b5b9b2a92764d17b4"
@@ -41,22 +41,23 @@
       "id": "child_giant_tire",
       "description": "Original photo of the child in a giant tire",
       "panel": "front_door_left",
-      "aspect_h_over_w": 1.33,
+      "aspect_h_over_w": 0.75,
       "rect": [
         42,
-        308,
+        355,
         191,
-        511
+        463
       ],
       "focal": [
         0.5,
         0.47
-      ]
+      ],
+      "rotation_cw": 90
     },
     {
       "id": "child_halloween_truck",
       "description": "Original photo of the child beside the purple Halloween inflatable truck",
-      "panel": "roof",
+      "panel": "hood",
       "aspect_h_over_w": 0.75,
       "rect": [
         418,
@@ -67,7 +68,8 @@
       "focal": [
         0.46,
         0.58
-      ]
+      ],
+      "rotation_cw": 180
     },
     {
       "id": "child_monster_truck",
@@ -83,7 +85,8 @@
       "focal": [
         0.58,
         0.66
-      ]
+      ],
+      "rotation_cw": 0
     }
   ],
   "originals_directory": "designs/modely-2024-forged-carbon/photos/originals",
